@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Hanna</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-container">
+    <div class="login-card">
+        <h2 style="color: var(--primary); margin-bottom: 5px;">Área Restrita</h2>
+        <p style="color: var(--gray); font-size: 0.9em; margin-bottom: 20px;">Gestão de Estoque</p>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}<div style="background: #fff0f0; color: #ff4757; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.85em;">{{ messages[0] }}</div>{% endif %}
+        {% endwith %}
+        
+        <form method="post">
+            <input type="text" name="username" placeholder="Usuário" required style="margin: 0;">
+            <input type="password" name="password" placeholder="Senha" required style="margin: 0;">
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Entrar no Sistema</button>
+        </form>
+        
+        <div style="margin-top: 25px;">
+            <a href="/" style="font-size: 0.85em; color: var(--gray); text-decoration: none;">← Voltar para a loja</a>
+        </div>
+    </div>
+</body>
+</html>

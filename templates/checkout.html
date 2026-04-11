@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout - Hanna</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-container">
+    <div class="login-card" style="max-width: 500px;">
+        <h2 style="color: var(--primary);">Finalizar Compra</h2>
+        
+        <div style="display: flex; align-items: center; gap: 15px; background: #f9f9f9; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: left;">
+            <img src="{{ produto[3] }}" style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover;">
+            <div>
+                <h4 style="margin: 0;">{{ produto[1] }}</h4>
+                <p style="color: var(--primary); font-weight: bold; margin: 5px 0 0 0;">R$ {{ produto[2] }}</p>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}<div style="color: red; font-size: 0.85em; margin-bottom: 15px;">{{ messages[0] }}</div>{% endif %}
+        {% endwith %}
+
+        <form action="/processar_pagamento/{{ produto[0] }}" method="post" style="text-align: left;">
+            <label style="font-size: 0.85em; color: var(--gray);">Nome Completo</label>
+            <input type="text" name="nome" required>
+            
+            <label style="font-size: 0.85em; color: var(--gray);">CPF (Apenas números)</label>
+            <input type="text" name="cpf" maxlength="11" required>
+            
+            <label style="font-size: 0.85em; color: var(--gray);">E-mail</label>
+            <input type="email" name="email" required>
+            
+            <button type="submit" class="btn btn-secondary" style="margin-top: 15px; width: 100%;">
+                Ir para Pagamento Seguro 🔒
+            </button>
+        </form>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="/" style="font-size: 0.85em; color: var(--gray); text-decoration: none;">← Cancelar e voltar para vitrine</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+# Segredos e Configurações Locais (CRÍTICO)
+.env
+
+# Ambientes Virtuais (Pesados e desnecessários no servidor)
+venv/
+env/
+.venv/
+
+# Arquivos compilados do Python (Gerados automaticamente)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log
+
+# Arquivos de Sistema Operacional
+.DS_Store
+Thumbs.db
