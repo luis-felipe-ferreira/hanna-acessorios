@@ -190,7 +190,7 @@ def webhook_asaas():
             cur = conn.cursor()
             
             cur.execute("""
-                UPDATE pedidos 
+                UPDATE vendas 
                 SET status = 'pago' 
                 WHERE asaas_id = %s
             """, (payment_id,))
