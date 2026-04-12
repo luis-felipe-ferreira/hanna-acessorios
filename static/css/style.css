@@ -1,3 +1,48 @@
+/* Container Principal */
+.admin-container {
+    display: flex;
+    flex-direction: row; /* Lado a lado no PC */
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Ajustes para Celular */
+@media (max-width: 768px) {
+    .admin-container {
+        flex-direction: column; /* Um abaixo do outro no Celular */
+        padding: 10px;
+    }
+
+    /* Faz os formulários ocuparem a largura total */
+    .form-sidebar, .inventory-table {
+        width: 100% !important;
+        margin-bottom: 20px;
+    }
+
+    /* Aumenta os campos para facilitar o clique com o dedo */
+    input, select, button {
+        height: 45px;
+        font-size: 16px !important; /* Evita que o iPhone dê zoom automático */
+    }
+
+    /* Melhora o Header (Topo) */
+    header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+}
+
+/* Estilo dos Cards (para ficar mais "clean") */
+.card {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+
 /* Variáveis de Cores e Estilo */
 :root {
     --primary: #ff4757;    /* Rosa/Vermelho Hanna */
