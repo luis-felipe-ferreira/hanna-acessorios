@@ -8,9 +8,6 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
-# ==========================================
-# 1. CONFIGURAÇÕES INICIAIS
-# ==========================================
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
@@ -44,9 +41,7 @@ def load_user(user_id):
         return User(user_id)
     return None
 
-# ==========================================
-# 2. ROTAS PÚBLICAS (VITRINE E CHECKOUT)
-# ==========================================
+
 @app.route('/')
 def vitrine():
     cat_id = request.args.get('categoria')
@@ -144,18 +139,13 @@ def processar_pagamento(id):
     cur.close()
     conn.close()
     
-    # D. Renderizar nossa tela passando os dados e o ID para o Polling
     return render_template('pix.html', 
                            qr_image=qr_resp['encodedImage'], 
                            copia_cola=qr_resp['payload'], 
                            produto=prod,
                            asaas_id=pagamento_id)
 
-# ==========================================
-# 3. ROTAS DE VERIFICAÇÃO E WEBHOOK
-# ==========================================
 
-# --- NOVA ROTA: O Javascript chama aqui a cada 3 segundos ---
 @app.route('/verificar_status/<asaas_id>')
 def verificar_status(asaas_id):
     conn = get_db_connection()
@@ -169,15 +159,12 @@ def verificar_status(asaas_id):
         return jsonify({"status": venda[0]})
     return jsonify({"status": "ERRO"})
 
-# --- O Asaas chama aqui quando o PIX é pago ---
-from flask import request, jsonify
 
 @app.route('/webhook/asaas', methods=['POST'])
 def webhook_asaas():
     # 1. Recebe os dados enviados pelo Asaas
     data = request.get_json()
 
-    # 2. Verifica se o evento é de pagamento confirmado ou recebido
     if data.get('event') in ['PAYMENT_CONFIRMED', 'PAYMENT_RECEIVED']:
         payment_id = data['payment']['id']
         
@@ -185,7 +172,6 @@ def webhook_asaas():
         print(f"Pagamento confirmado recebido: {payment_id}")
 
         try:
-            # 3. Conecta ao seu banco Supabase
             conn = get_db_connection()
             cur = conn.cursor()
             
@@ -208,9 +194,7 @@ def webhook_asaas():
     # 5. Retorna 200 para o Asaas parar de tentar enviar esse mesmo evento
     return jsonify({"status": "success"}), 200
 
-# ==========================================
-# 4. ROTAS DE AUTENTICAÇÃO (LOGIN/LOGOUT)
-# ==========================================
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -230,9 +214,7 @@ def logout():
     logout_user()
     return redirect(url_for('vitrine'))
 
-# ==========================================
-# 5. ROTAS ADMINISTRATIVAS (PROTEGIDAS)
-# ==========================================
+
 @app.route('/admin')
 @login_required
 def admin_panel():

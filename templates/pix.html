@@ -83,7 +83,7 @@
             fetch(`/verificar_status/${asaasId}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.status === 'PAGO') {
+                    if (data.status === 'pago') {
                         // Esconde o QR Code e mostra o Sucesso
                         document.getElementById('tela-espera').style.display = 'none';
                         document.getElementById('tela-sucesso').style.display = 'block';
