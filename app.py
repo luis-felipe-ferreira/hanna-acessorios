@@ -170,28 +170,43 @@ def verificar_status(asaas_id):
     return jsonify({"status": "ERRO"})
 
 # --- O Asaas chama aqui quando o PIX é pago ---
+from flask import request, jsonify
+
 @app.route('/webhook/asaas', methods=['POST'])
-def asaas_webhook():
-    dados = request.json
-    
-    if dados and dados.get('event') in ['PAYMENT_RECEIVED', 'PAYMENT_CONFIRMED']:
-        asaas_id = dados['payment']['id']
+def webhook_asaas():
+    # 1. Recebe os dados enviados pelo Asaas
+    data = request.get_json()
+
+    # 2. Verifica se o evento é de pagamento confirmado ou recebido
+    if data.get('event') in ['PAYMENT_CONFIRMED', 'PAYMENT_RECEIVED']:
+        payment_id = data['payment']['id']
         
-        conn = get_db_connection()
-        cur = conn.cursor()
-        
-        cur.execute("UPDATE vendas SET status = 'PAGO' WHERE asaas_id = %s RETURNING produto_id", (asaas_id,))
-        venda = cur.fetchone()
-        
-        if venda:
-            produto_id = venda[0]
-            cur.execute("UPDATE produtos SET quantidade = quantidade - 1 WHERE id = %s AND quantidade > 0", (produto_id,))
+        # Log para você acompanhar no painel do Render
+        print(f"Pagamento confirmado recebido: {payment_id}")
+
+        try:
+            # 3. Conecta ao seu banco Supabase
+            conn = get_db_connection()
+            cur = conn.cursor()
             
-        conn.commit()
-        cur.close()
-        conn.close()
-        
-    return jsonify({"status": "recebido"}), 200
+            cur.execute("""
+                UPDATE pedidos 
+                SET status = 'pago' 
+                WHERE asaas_id = %s
+            """, (payment_id,))
+
+            conn.commit()
+            cur.close()
+            conn.close()
+            
+            print(f"Pedido {payment_id} atualizado com sucesso no banco!")
+            
+        except Exception as e:
+            print(f"Erro ao atualizar banco de dados: {e}")
+            return jsonify({"status": "error", "message": str(e)}), 500
+
+    # 5. Retorna 200 para o Asaas parar de tentar enviar esse mesmo evento
+    return jsonify({"status": "success"}), 200
 
 # ==========================================
 # 4. ROTAS DE AUTENTICAÇÃO (LOGIN/LOGOUT)
