@@ -342,15 +342,15 @@ input:focus, select:focus {
 /* Preço e disponibilidade na vitrine */
 .product-price {
     display: inline-block;
-    color: #a82945;
-    background: #fff0f3;
-    border: 1px solid #f8d5dd;
-    border-radius: 999px;
+    color: var(--dark);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
     font-size: 1.15rem;
     font-weight: 800;
     letter-spacing: .01em;
     margin: 10px 0;
-    padding: 5px 13px;
+    padding: 0;
 }
 
 .stock-notice {
@@ -396,7 +396,7 @@ input:focus, select:focus {
 }
 
 .checkout-step, .checkout-product-info > span {
-    color: #a82945;
+    color: #343b48;
     font-size: .7rem;
     font-weight: 800;
     letter-spacing: .13em;
@@ -463,9 +463,9 @@ input:focus, select:focus {
 
 .checkout-section h2 > span {
     align-items: center;
-    background: #fff0f3;
+    background: #edf1f6;
     border-radius: 50%;
-    color: #a82945;
+    color: var(--dark);
     display: inline-flex;
     flex: 0 0 28px;
     font-size: .82rem;
@@ -519,9 +519,9 @@ input:focus, select:focus {
 }
 
 .receiving-option.is-selected {
-    background: #fff7f8;
-    border: 2px solid var(--primary);
-    box-shadow: 0 0 0 3px rgba(255, 71, 87, .08);
+    background: #f5f7fa;
+    border: 2px solid var(--dark);
+    box-shadow: 0 0 0 3px rgba(47, 53, 66, .08);
     padding: 13px;
 }
 
@@ -561,9 +561,9 @@ input:focus, select:focus {
     width: 18px;
 }
 
-.is-selected .radio-mark { border-color: var(--primary); }
+.is-selected .radio-mark { border-color: var(--dark); }
 .is-selected .radio-mark::after {
-    background: var(--primary);
+    background: var(--dark);
     border-radius: 50%;
     content: "";
     inset: 4px;
@@ -627,7 +627,7 @@ input:focus, select:focus {
 
 .checkout-submit {
     align-items: center;
-    background: linear-gradient(100deg, #20bd68, #159e54);
+    background: linear-gradient(100deg, #354252, #252d39);
     border-radius: 12px;
     display: flex;
     font-size: .95rem;
@@ -637,8 +637,9 @@ input:focus, select:focus {
     width: 100%;
 }
 
-.checkout-submit span { font-size: 1.2rem; margin-left: 8px; }
-.checkout-submit:hover { background: linear-gradient(100deg, #19aa5b, #118748); }
+.checkout-submit .checkout-lock { font-size: .95rem; margin: 0 8px 0 0; }
+.checkout-submit .checkout-arrow { font-size: 1.2rem; margin-left: 8px; }
+.checkout-submit:hover { background: linear-gradient(100deg, #293544, #1c232d); }
 
 .checkout-security {
     color: #8992a0;
