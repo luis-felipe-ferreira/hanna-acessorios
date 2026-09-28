@@ -11,14 +11,20 @@
         <a href="/admin" class="logo">ADMIN HANNA</a>
         <div style="display: flex; gap: 15px; align-items: center;">
             <a href="/" style="color: var(--gray); text-decoration: none;">Ver Loja</a>
+            <a href="/pedidos" style="color: var(--gray); text-decoration: none;">Pedidos</a>
             <a href="/logout" class="btn btn-dark" style="padding: 5px 15px;">Sair</a>
         </div>
     </nav>
 
     <div class="admin-container">
         <aside class="sidebar">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}<div class="flash-message">{{ messages[0] }}</div>{% endif %}
+            {% endwith %}
+
             <h3>Nova Categoria</h3>
             <form action="/cadastrar_categoria" method="post" style="display: flex; gap: 10px; margin-bottom: 25px;">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                 <input type="text" name="nome_categoria" placeholder="Ex: Chokers" required style="margin: 0;">
                 <button type="submit" class="btn btn-secondary" style="margin: 0; width: auto;">+</button>
             </form>
@@ -27,6 +33,7 @@
 
             <h3>Novo Produto</h3>
             <form action="/cadastrar_produto" method="post" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                 <input type="text" name="nome" placeholder="Nome do acessório" required>
                 <div style="display: flex; gap: 10px;">
                     <input type="number" step="0.01" name="preco" placeholder="R$ Preço" required style="width: 50%; margin: 0;">
@@ -38,36 +45,44 @@
                     <option value="{{ cat[0] }}">{{ cat[1] }}</option>
                     {% endfor %}
                 </select>
-                <input type="file" name="foto" required style="font-size: 0.85em;">
+                <input type="file" name="foto" accept="image/*" required style="font-size: 0.85em;">
                 <button type="submit" class="btn btn-primary" style="margin-top: 5px;">Salvar Produto</button>
             </form>
         </aside>
 
         <main>
             <form action="/admin" method="get" style="display: flex; gap: 10px; margin-bottom: 25px;">
-                <input type="text" name="busca" placeholder="Buscar no estoque..." style="margin: 0;">
+                <input type="text" name="busca" value="{{ request.args.get('busca', '') }}" placeholder="Buscar no estoque..." style="margin: 0;">
                 <button type="submit" class="btn btn-dark" style="width: 120px; margin: 0;">Buscar</button>
             </form>
             
+            {% if produtos %}
             <div class="grid">
                 {% for p in produtos %}
                 <div class="card">
-                    <img src="{{ p[4] }}">
+                    <img src="{{ p[4] }}" alt="{{ p[1] }}">
                     <h4 style="margin: 10px 0 5px 0;">{{ p[1] }}</h4>
                     <p style="font-size: 0.8em; color: var(--gray); margin-bottom: 15px;">{{ p[6] }}</p>
                     
                     <form action="/editar_item/{{ p[0] }}" method="post" style="display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                         <div style="display: flex; gap: 5px; width: 100%;">
                             <input type="number" step="0.01" name="novo_preco" value="{{ p[2] }}" title="Preço" style="width: 50%; margin: 0; padding: 8px; text-align: center;">
-                            <input type="number" name="nova_qtd" value="{{ p[5] }}" title="Qtd. Estoque" style="width: 50%; margin: 0; padding: 8px; text-align: center;">
+                            <input type="number" name="nova_qtd" value="{{ p[5] }}" title="Qtd. Estoque" min="0" style="width: 50%; margin: 0; padding: 8px; text-align: center;">
                         </div>
                         <button type="submit" class="btn btn-secondary" style="padding: 8px; width: 100%; font-size: 0.85em;">Salvar Ajustes</button>
                     </form>
                     
-                    <a href="/excluir_produto/{{ p[0] }}" style="color: #ff4757; font-size: 0.8em; display: block; margin-top: 15px;" onclick="return confirm('Tem certeza que deseja excluir?')">Remover Item</a>
+                    <form action="/excluir_produto/{{ p[0] }}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir?')" style="margin-top: 15px;">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="link-danger">Remover Item</button>
+                    </form>
                 </div>
                 {% endfor %}
             </div>
+            {% else %}
+                <div class="empty-state">Nenhum produto encontrado no estoque.</div>
+            {% endif %}
         </main>
     </div>
 </body>

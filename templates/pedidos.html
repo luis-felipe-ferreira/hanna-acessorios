@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos - Hanna Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="/pedidos" class="logo">PEDIDOS HANNA</a>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="/admin" style="color: var(--gray); text-decoration: none;">Estoque</a>
+            <a href="/" style="color: var(--gray); text-decoration: none;">Ver Loja</a>
+            <a href="/logout" class="btn btn-dark" style="padding: 5px 15px;">Sair</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if pedidos %}
+        <div class="orders-list">
+            {% for p in pedidos %}
+            <article class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h3>{{ p[15] or "Produto removido" }}</h3>
+                        <p>{{ p[2] }} - {{ p[4] | brl }}</p>
+                    </div>
+                    <span class="status-badge status-{{ p[5] }}">{{ p[5] }}</span>
+                </div>
+
+                <div class="order-grid">
+                    <div>
+                        <strong>Cliente</strong>
+                        <p>{{ p[2] }}</p>
+                        <p>{{ p[3] or "Sem telefone" }}</p>
+                    </div>
+                    <div>
+                        <strong>Recebimento</strong>
+                        {% if p[6] == "retirada" %}
+                            <p>Retirada</p>
+                        {% else %}
+                            <p>Entrega</p>
+                            <p>{{ p[8] }}, {{ p[9] }}{% if p[10] %} - {{ p[10] }}{% endif %}</p>
+                            <p>{{ p[11] }} - {{ p[12] }}/{{ p[13] }} - CEP {{ p[7] }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <strong>Referência</strong>
+                        <p>Pedido #{{ p[0] }}</p>
+                        <p>{{ p[1] }}</p>
+                        <p>{{ p[14].strftime("%d/%m/%Y %H:%M") if p[14] else "" }}</p>
+                    </div>
+                </div>
+
+                {% if p[3] %}
+                    <a class="btn btn-secondary" target="_blank" href="https://wa.me/{{ p[3] | whatsapp }}?text=Olá, {{ p[2] | urlencode }}! Sobre seu pedido da Hanna Acessórios.">Chamar no WhatsApp</a>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+            <div class="empty-state">Nenhum pedido registrado ainda.</div>
+        {% endif %}
+    </div>
+</body>
+</html>

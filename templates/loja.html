@@ -10,12 +10,18 @@
     <nav>
         <a href="/" class="logo">HANNA ACESSÓRIOS</a>
         <form action="/" method="get" style="display: flex; gap: 5px;">
-            <input type="text" name="busca" placeholder="O que você busca?" style="margin: 0; width: 200px;">
-            <button type="submit" class="btn btn-dark" style="padding: 5px 15px; margin: 0;">🔍</button>
+            <input type="text" name="busca" placeholder="O que você busca?" value="{{ request.args.get('busca', '') }}" style="margin: 0; width: 200px;">
+            <button type="submit" class="btn btn-dark" style="padding: 5px 15px; margin: 0;">Buscar</button>
         </form>
     </nav>
 
     <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+
         <div class="filters">
             <a href="/" class="filter-btn" style="background: var(--dark); color: white;">Ver Tudo</a>
             {% for cat in categorias %}
@@ -23,23 +29,27 @@
             {% endfor %}
         </div>
 
+        {% if produtos %}
         <div class="grid">
             {% for p in produtos %}
             <div class="card">
-                <img src="{{ p[4] }}">
+                <img src="{{ p[4] }}" alt="{{ p[1] }}">
                 <h3 style="margin-bottom: 5px;">{{ p[1] }}</h3>
-                <p style="color: var(--primary); font-weight: bold; font-size: 1.3rem; margin: 10px 0;">R$ {{ p[2] }}</p>
+                <p style="color: var(--primary); font-weight: bold; font-size: 1.3rem; margin: 10px 0;">{{ p[2] | brl }}</p>
                 
                 {% if p[5] > 0 %}
-                    <p style="font-size: 0.85em; color: var(--secondary); font-weight: bold; margin-bottom: 10px;">✓ Em estoque ({{ p[5] }})</p>
+                    <p style="font-size: 0.85em; color: var(--secondary); font-weight: bold; margin-bottom: 10px;">Em estoque ({{ p[5] }})</p>
                     <a href="/checkout/{{ p[0] }}" class="btn btn-dark" style="display: block; width: 100%; box-sizing: border-box;">Comprar Agora</a>
                 {% else %}
-                    <p style="font-size: 0.85em; color: #ff4757; font-weight: bold; margin-bottom: 10px;">✗ Esgotado</p>
+                    <p style="font-size: 0.85em; color: #ff4757; font-weight: bold; margin-bottom: 10px;">Esgotado</p>
                     <button class="btn" style="width: 100%; background-color: #e2e2e2; color: #888; cursor: not-allowed;" disabled>Indisponível</button>
                 {% endif %}
             </div>
             {% endfor %}
         </div>
+        {% else %}
+            <div class="empty-state">Nenhum produto encontrado.</div>
+        {% endif %}
     </div>
 
     <footer style="text-align: center; padding: 50px 20px; margin-top: 50px; border-top: 1px solid #eee;">

@@ -1,0 +1,27 @@
+ALTER TABLE vendas
+ADD COLUMN IF NOT EXISTS cliente_cpf TEXT,
+ADD COLUMN IF NOT EXISTS cliente_email TEXT,
+ADD COLUMN IF NOT EXISTS cliente_telefone TEXT,
+ADD COLUMN IF NOT EXISTS entrega_tipo TEXT DEFAULT 'entrega',
+ADD COLUMN IF NOT EXISTS entrega_cep TEXT,
+ADD COLUMN IF NOT EXISTS entrega_rua TEXT,
+ADD COLUMN IF NOT EXISTS entrega_numero TEXT,
+ADD COLUMN IF NOT EXISTS entrega_complemento TEXT,
+ADD COLUMN IF NOT EXISTS entrega_bairro TEXT,
+ADD COLUMN IF NOT EXISTS entrega_cidade TEXT,
+ADD COLUMN IF NOT EXISTS entrega_estado TEXT,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+UPDATE vendas
+SET entrega_tipo = 'entrega'
+WHERE entrega_tipo IS NULL;
+
+UPDATE vendas
+SET created_at = CURRENT_TIMESTAMP
+WHERE created_at IS NULL;
+
+ALTER TABLE vendas
+ALTER COLUMN entrega_tipo SET DEFAULT 'entrega';
+
+ALTER TABLE vendas
+ALTER COLUMN created_at SET DEFAULT CURRENT_TIMESTAMP;

@@ -7,39 +7,100 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="login-container">
-    <div class="login-card" style="max-width: 500px;">
+    <div class="login-card" style="max-width: 540px;">
         <h2 style="color: var(--primary);">Finalizar Compra</h2>
         
         <div style="display: flex; align-items: center; gap: 15px; background: #f9f9f9; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: left;">
-            <img src="{{ produto[3] }}" style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover;">
+            <img src="{{ produto[3] }}" alt="{{ produto[1] }}" style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover;">
             <div>
                 <h4 style="margin: 0;">{{ produto[1] }}</h4>
-                <p style="color: var(--primary); font-weight: bold; margin: 5px 0 0 0;">R$ {{ produto[2] }}</p>
+                <p style="color: var(--primary); font-weight: bold; margin: 5px 0 0 0;">{{ produto[2] | brl }}</p>
             </div>
         </div>
 
         {% with messages = get_flashed_messages() %}
-            {% if messages %}<div style="color: red; font-size: 0.85em; margin-bottom: 15px;">{{ messages[0] }}</div>{% endif %}
+            {% if messages %}<div class="flash-message">{{ messages[0] }}</div>{% endif %}
         {% endwith %}
 
         <form action="/processar_pagamento/{{ produto[0] }}" method="post" style="text-align: left;">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
             <label style="font-size: 0.85em; color: var(--gray);">Nome Completo</label>
             <input type="text" name="nome" required>
             
-            <label style="font-size: 0.85em; color: var(--gray);">CPF (Apenas números)</label>
-            <input type="text" name="cpf" maxlength="11" required>
+            <label style="font-size: 0.85em; color: var(--gray);">CPF (apenas números)</label>
+            <input type="text" name="cpf" maxlength="11" pattern="[0-9]{11}" required>
             
             <label style="font-size: 0.85em; color: var(--gray);">E-mail</label>
             <input type="email" name="email" required>
+
+            <label style="font-size: 0.85em; color: var(--gray);">WhatsApp</label>
+            <input type="tel" name="telefone" placeholder="DDD + número" required>
+
+            <label style="font-size: 0.85em; color: var(--gray);">Forma de recebimento</label>
+            <select name="entrega_tipo" id="entregaTipo" required>
+                <option value="entrega">Entrega</option>
+                <option value="retirada">Retirar com a Hanna</option>
+            </select>
+
+            <div id="camposEntrega">
+                <label style="font-size: 0.85em; color: var(--gray);">CEP</label>
+                <input type="text" name="entrega_cep" maxlength="9" data-entrega-obrigatorio>
+
+                <label style="font-size: 0.85em; color: var(--gray);">Rua/Avenida</label>
+                <input type="text" name="entrega_rua" data-entrega-obrigatorio>
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="width: 35%;">
+                        <label style="font-size: 0.85em; color: var(--gray);">Número</label>
+                        <input type="text" name="entrega_numero" data-entrega-obrigatorio>
+                    </div>
+                    <div style="width: 65%;">
+                        <label style="font-size: 0.85em; color: var(--gray);">Complemento</label>
+                        <input type="text" name="entrega_complemento">
+                    </div>
+                </div>
+
+                <label style="font-size: 0.85em; color: var(--gray);">Bairro</label>
+                <input type="text" name="entrega_bairro" data-entrega-obrigatorio>
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="width: 70%;">
+                        <label style="font-size: 0.85em; color: var(--gray);">Cidade</label>
+                        <input type="text" name="entrega_cidade" data-entrega-obrigatorio>
+                    </div>
+                    <div style="width: 30%;">
+                        <label style="font-size: 0.85em; color: var(--gray);">UF</label>
+                        <input type="text" name="entrega_estado" maxlength="2" data-entrega-obrigatorio>
+                    </div>
+                </div>
+            </div>
             
             <button type="submit" class="btn btn-secondary" style="margin-top: 15px; width: 100%;">
-                Ir para Pagamento Seguro 🔒
+                Ir para Pagamento Seguro
             </button>
         </form>
         
         <div style="margin-top: 20px; text-align: center;">
-            <a href="/" style="font-size: 0.85em; color: var(--gray); text-decoration: none;">← Cancelar e voltar para vitrine</a>
+            <a href="/" style="font-size: 0.85em; color: var(--gray); text-decoration: none;">Cancelar e voltar para vitrine</a>
         </div>
     </div>
+
+    <script>
+        const entregaTipo = document.getElementById("entregaTipo");
+        const camposEntrega = document.getElementById("camposEntrega");
+        const entregaObrigatorios = document.querySelectorAll("[data-entrega-obrigatorio]");
+
+        function atualizarCamposEntrega() {
+            const entregar = entregaTipo.value === "entrega";
+            camposEntrega.style.display = entregar ? "block" : "none";
+            entregaObrigatorios.forEach((campo) => {
+                campo.required = entregar;
+            });
+        }
+
+        entregaTipo.addEventListener("change", atualizarCamposEntrega);
+        atualizarCamposEntrega();
+    </script>
 </body>
 </html>
