@@ -609,10 +609,10 @@ def excluir_produto(id):
             print(f"Erro ao remover imagem do Cloudinary: {e}")
 
     with db_cursor(commit=True) as (_, cur):
-        # 1. Desvincula o produto do histórico de vendas (evita erro de chave estrangeira)
+        # 1. Desvincula o produto do histórico de vendas para evitar erro de chave estrangeira
         cur.execute("UPDATE vendas SET produto_id = NULL WHERE produto_id = %s", (id,))
         
-        # 2. Deleta o produto do banco de dados
+        # 2. Deleta o produto do estoque
         cur.execute("DELETE FROM produtos WHERE id = %s", (id,))
         
     return redirect(url_for("admin_panel"))
