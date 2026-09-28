@@ -85,6 +85,7 @@ def inject_csrf_token():
     return {
         "csrf_token": get_csrf_token,
         "whatsapp_number": os.getenv("WHATSAPP_NUMBER", "5586999999999"),
+        "store_pickup_address": os.getenv("STORE_PICKUP_ADDRESS", "Ponto marcado no mapa — Chapadinha/MA"),
     }
 
 

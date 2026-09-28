@@ -35,10 +35,12 @@
             <div class="card">
                 <img src="{{ p[4] }}" alt="{{ p[1] }}">
                 <h3 style="margin-bottom: 5px;">{{ p[1] }}</h3>
-                <p style="color: var(--primary); font-weight: bold; font-size: 1.3rem; margin: 10px 0;">{{ p[2] | brl }}</p>
+                <p class="product-price">{{ p[2] | brl }}</p>
                 
                 {% if p[5] > 0 %}
-                    <p style="font-size: 0.85em; color: var(--secondary); font-weight: bold; margin-bottom: 10px;">Em estoque ({{ p[5] }})</p>
+                    {% if p[5] == 3 %}
+                    <p class="stock-notice">Últimas 3 unidades</p>
+                    {% endif %}
                     <a href="/checkout/{{ p[0] }}" class="btn btn-dark" style="display: block; width: 100%; box-sizing: border-box;">Comprar Agora</a>
                 {% else %}
                     <p style="font-size: 0.85em; color: #ff4757; font-weight: bold; margin-bottom: 10px;">Esgotado</p>

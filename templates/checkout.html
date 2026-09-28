@@ -3,104 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Hanna</title>
+    <title>Finalizar compra - Hanna Acessórios</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="login-container">
-    <div class="login-card" style="max-width: 540px;">
-        <h2 style="color: var(--primary);">Finalizar Compra</h2>
-        
-        <div style="display: flex; align-items: center; gap: 15px; background: #f9f9f9; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: left;">
-            <img src="{{ produto[3] }}" alt="{{ produto[1] }}" style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover;">
-            <div>
-                <h4 style="margin: 0;">{{ produto[1] }}</h4>
-                <p style="color: var(--primary); font-weight: bold; margin: 5px 0 0 0;">{{ produto[2] | brl }}</p>
+<body class="checkout-page">
+    <main class="checkout-shell">
+        <header class="checkout-heading">
+            <a href="/" class="checkout-back">← Voltar à loja</a>
+            <span class="checkout-step">FINALIZAÇÃO SEGURA</span>
+            <h1>Quase seu 💝</h1>
+            <p>Preencha seus dados para continuar com o pagamento.</p>
+        </header>
+
+        <section class="checkout-product">
+            <img src="{{ produto[3] }}" alt="{{ produto[1] }}">
+            <div class="checkout-product-info">
+                <span>SEU PEDIDO</span>
+                <h2>{{ produto[1] }}</h2>
+                <p class="product-price">{{ produto[2] | brl }}</p>
             </div>
-        </div>
+        </section>
 
         {% with messages = get_flashed_messages() %}
             {% if messages %}<div class="flash-message">{{ messages[0] }}</div>{% endif %}
         {% endwith %}
 
-        <form action="/processar_pagamento/{{ produto[0] }}" method="post" style="text-align: left;">
+        <form action="/processar_pagamento/{{ produto[0] }}" method="post" class="checkout-form">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
 
-            <label style="font-size: 0.85em; color: var(--gray);">Nome Completo</label>
-            <input type="text" name="nome" required>
-            
-            <label style="font-size: 0.85em; color: var(--gray);">CPF (apenas números)</label>
-            <input type="text" name="cpf" maxlength="11" pattern="[0-9]{11}" required>
-            
-            <label style="font-size: 0.85em; color: var(--gray);">E-mail</label>
-            <input type="email" name="email" required>
+            <section class="checkout-section">
+                <h2><span>1</span> Seus dados</h2>
+                <label for="nome">Nome completo</label>
+                <input id="nome" type="text" name="nome" autocomplete="name" placeholder="Como podemos chamar você?" required>
 
-            <label style="font-size: 0.85em; color: var(--gray);">WhatsApp</label>
-            <input type="tel" name="telefone" placeholder="DDD + número" required>
-
-            <label style="font-size: 0.85em; color: var(--gray);">Forma de recebimento</label>
-            <select name="entrega_tipo" id="entregaTipo" required>
-                <option value="entrega">Entrega</option>
-                <option value="retirada">Retirar com a Hanna</option>
-            </select>
-
-            <div id="camposEntrega">
-                <label style="font-size: 0.85em; color: var(--gray);">CEP</label>
-                <input type="text" name="entrega_cep" maxlength="9" data-entrega-obrigatorio>
-
-                <label style="font-size: 0.85em; color: var(--gray);">Rua/Avenida</label>
-                <input type="text" name="entrega_rua" data-entrega-obrigatorio>
-
-                <div style="display: flex; gap: 10px;">
-                    <div style="width: 35%;">
-                        <label style="font-size: 0.85em; color: var(--gray);">Número</label>
-                        <input type="text" name="entrega_numero" data-entrega-obrigatorio>
+                <div class="form-row">
+                    <div>
+                        <label for="cpf">CPF</label>
+                        <input id="cpf" type="text" name="cpf" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" placeholder="Somente números" required>
                     </div>
-                    <div style="width: 65%;">
-                        <label style="font-size: 0.85em; color: var(--gray);">Complemento</label>
-                        <input type="text" name="entrega_complemento">
+                    <div>
+                        <label for="telefone">WhatsApp</label>
+                        <input id="telefone" type="tel" name="telefone" autocomplete="tel" placeholder="DDD + número" required>
                     </div>
                 </div>
 
-                <label style="font-size: 0.85em; color: var(--gray);">Bairro</label>
-                <input type="text" name="entrega_bairro" data-entrega-obrigatorio>
+                <label for="email">E-mail</label>
+                <input id="email" type="email" name="email" autocomplete="email" placeholder="voce@email.com" required>
+            </section>
 
-                <div style="display: flex; gap: 10px;">
-                    <div style="width: 70%;">
-                        <label style="font-size: 0.85em; color: var(--gray);">Cidade</label>
-                        <input type="text" name="entrega_cidade" data-entrega-obrigatorio>
+            <section class="checkout-section receiving-section">
+                <h2><span>2</span> Como quer receber?</h2>
+                <div class="receiving-options" role="radiogroup" aria-label="Forma de recebimento">
+                    <label class="receiving-option is-selected" data-option="entrega">
+                        <input type="radio" name="entrega_tipo" value="entrega" checked>
+                        <span class="receiving-icon">🚚</span>
+                        <span class="receiving-copy"><strong>Receber em casa</strong><small>Informe o endereço de entrega</small></span>
+                        <span class="radio-mark" aria-hidden="true"></span>
+                    </label>
+                    <label class="receiving-option" data-option="retirada">
+                        <input type="radio" name="entrega_tipo" value="retirada">
+                        <span class="receiving-icon">📍</span>
+                        <span class="receiving-copy"><strong>Retirar com a Hanna</strong><small>Retirada em {{ store_pickup_address }}</small></span>
+                        <span class="radio-mark" aria-hidden="true"></span>
+                    </label>
+                </div>
+
+                <div id="detalhesRetirada" class="pickup-details" hidden>
+                    <div class="pickup-address">
+                        <span class="pickup-pin">📍</span>
+                        <div><strong>Endereço para retirada</strong><p>{{ store_pickup_address }}</p></div>
                     </div>
-                    <div style="width: 30%;">
-                        <label style="font-size: 0.85em; color: var(--gray);">UF</label>
-                        <input type="text" name="entrega_estado" maxlength="2" data-entrega-obrigatorio>
+                    <iframe
+                        class="pickup-map"
+                        src="https://www.google.com/maps/embed?pb=!4v1790637897890!6m8!1m7!1sAnlD9-AvodzW_PCiL1cavA!2m2!1d-3.67569725520841!2d-43.11209429666262!3f64.61535961008929!4f2.740244878980775!5f0.7820865974627469"
+                        title="Mapa do ponto de retirada Hanna Acessórios"
+                        allowfullscreen
+                        loading="lazy"
+                        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    <a class="pickup-directions" href="https://www.google.com/maps/dir/?api=1&amp;destination=-3.67569725520841%2C-43.11209429666262" target="_blank" rel="noopener noreferrer">
+                        Abrir rota no Google Maps <span>↗</span>
+                    </a>
+                </div>
+
+                <div id="camposEntrega" class="address-fields">
+                    <div class="cep-field">
+                        <label for="cep">CEP</label>
+                        <input id="cep" type="text" name="entrega_cep" maxlength="9" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" data-entrega-obrigatorio>
+                        <span id="cepStatus" class="field-hint" aria-live="polite">Digite o CEP para preencher o endereço.</span>
+                    </div>
+                    <label for="rua">Rua / Avenida</label>
+                    <input id="rua" type="text" name="entrega_rua" autocomplete="address-line1" data-entrega-obrigatorio>
+
+                    <div class="form-row address-number-row">
+                        <div>
+                            <label for="numero">Número</label>
+                            <input id="numero" type="text" name="entrega_numero" placeholder="Nº" data-entrega-obrigatorio>
+                        </div>
+                        <div>
+                            <label for="complemento">Complemento <span>(opcional)</span></label>
+                            <input id="complemento" type="text" name="entrega_complemento" placeholder="Apto, bloco...">
+                        </div>
+                    </div>
+
+                    <label for="bairro">Bairro</label>
+                    <input id="bairro" type="text" name="entrega_bairro" autocomplete="address-level3" data-entrega-obrigatorio>
+                    <div class="form-row">
+                        <div>
+                            <label for="cidade">Cidade</label>
+                            <input id="cidade" type="text" name="entrega_cidade" autocomplete="address-level2" data-entrega-obrigatorio>
+                        </div>
+                        <div class="state-field">
+                            <label for="estado">UF</label>
+                            <input id="estado" type="text" name="entrega_estado" maxlength="2" autocomplete="address-level1" data-entrega-obrigatorio>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <button type="submit" class="btn btn-secondary" style="margin-top: 15px; width: 100%;">
-                Ir para Pagamento Seguro
-            </button>
+            </section>
+
+            <button type="submit" class="btn btn-secondary checkout-submit">Continuar para pagamento seguro <span>→</span></button>
+            <p class="checkout-security">🔒 Pagamento protegido via PIX</p>
         </form>
-        
-        <div style="margin-top: 20px; text-align: center;">
-            <a href="/" style="font-size: 0.85em; color: var(--gray); text-decoration: none;">Cancelar e voltar para vitrine</a>
-        </div>
-    </div>
+    </main>
 
     <script>
-        const entregaTipo = document.getElementById("entregaTipo");
-        const camposEntrega = document.getElementById("camposEntrega");
-        const entregaObrigatorios = document.querySelectorAll("[data-entrega-obrigatorio]");
+        const entregaRadios = document.querySelectorAll('input[name="entrega_tipo"]');
+        const opcoesRecebimento = document.querySelectorAll('.receiving-option');
+        const camposEntrega = document.getElementById('camposEntrega');
+        const detalhesRetirada = document.getElementById('detalhesRetirada');
+        const entregaObrigatorios = document.querySelectorAll('[data-entrega-obrigatorio]');
+        const cepInput = document.getElementById('cep');
+        const cepStatus = document.getElementById('cepStatus');
+        let cepConsultado = '';
 
-        function atualizarCamposEntrega() {
-            const entregar = entregaTipo.value === "entrega";
-            camposEntrega.style.display = entregar ? "block" : "none";
-            entregaObrigatorios.forEach((campo) => {
-                campo.required = entregar;
+        function atualizarRecebimento() {
+            const tipo = document.querySelector('input[name="entrega_tipo"]:checked').value;
+            const entregar = tipo === 'entrega';
+            camposEntrega.hidden = !entregar;
+            detalhesRetirada.hidden = entregar;
+            entregaObrigatorios.forEach((campo) => { campo.required = entregar; });
+            opcoesRecebimento.forEach((opcao) => {
+                const selecionada = opcao.dataset.option === tipo;
+                opcao.classList.toggle('is-selected', selecionada);
+                opcao.querySelector('input').setAttribute('aria-checked', String(selecionada));
             });
         }
 
-        entregaTipo.addEventListener("change", atualizarCamposEntrega);
-        atualizarCamposEntrega();
+        entregaRadios.forEach((radio) => radio.addEventListener('change', atualizarRecebimento));
+        atualizarRecebimento();
+
+        cepInput.addEventListener('input', () => {
+            const numeros = cepInput.value.replace(/\D/g, '').slice(0, 8);
+            cepInput.value = numeros.length > 5 ? `${numeros.slice(0, 5)}-${numeros.slice(5)}` : numeros;
+            if (numeros.length < 8) {
+                cepConsultado = '';
+                cepStatus.textContent = 'Digite o CEP para preencher o endereço.';
+                cepStatus.className = 'field-hint';
+            }
+        });
+
+        cepInput.addEventListener('blur', async () => {
+            const cep = cepInput.value.replace(/\D/g, '');
+            if (cep.length !== 8 || cep === cepConsultado) return;
+            cepStatus.textContent = 'Buscando endereço…';
+            cepStatus.className = 'field-hint';
+            try {
+                const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                if (!resposta.ok) throw new Error('Falha na consulta');
+                const endereco = await resposta.json();
+                if (endereco.erro) throw new Error('CEP não encontrado');
+                document.querySelector('[name="entrega_rua"]').value = endereco.logradouro || '';
+                document.querySelector('[name="entrega_bairro"]').value = endereco.bairro || '';
+                document.querySelector('[name="entrega_cidade"]').value = endereco.localidade || '';
+                document.querySelector('[name="entrega_estado"]').value = endereco.uf || '';
+                cepConsultado = cep;
+                cepStatus.textContent = 'Endereço preenchido. Informe o número e confira os dados.';
+                cepStatus.className = 'field-hint field-hint-success';
+                document.getElementById('numero').focus();
+            } catch (erro) {
+                cepStatus.textContent = erro.message === 'CEP não encontrado' ? 'CEP não encontrado. Confira e tente novamente.' : 'Não foi possível buscar o CEP. Preencha o endereço manualmente.';
+                cepStatus.className = 'field-hint field-hint-error';
+            }
+        });
     </script>
 </body>
 </html>
