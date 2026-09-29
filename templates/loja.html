@@ -22,12 +22,17 @@
             {% endif %}
         {% endwith %}
 
-        <div class="filters">
-            <a href="/" class="filter-btn" style="background: var(--dark); color: white;">Ver Tudo</a>
-            {% for cat in categorias %}
-            <a href="/?categoria={{ cat[0] }}" class="filter-btn">{{ cat[1] }}</a>
-            {% endfor %}
-        </div>
+        <form action="/" method="get" class="catalog-toolbar">
+            <label for="categoriaFiltro">Escolha uma categoria</label>
+            <select id="categoriaFiltro" name="categoria">
+                <option value="">Todas as categorias</option>
+                {% for cat in categorias %}
+                <option value="{{ cat[0] }}" {% if request.args.get('categoria', '') == cat[0]|string %}selected{% endif %}>{{ cat[1] }}</option>
+                {% endfor %}
+            </select>
+            {% if request.args.get('busca') %}<input type="hidden" name="busca" value="{{ request.args.get('busca') }}">{% endif %}
+            <button type="submit" class="btn btn-dark">Filtrar</button>
+        </form>
 
         {% if produtos %}
         <div class="grid">
